@@ -1,0 +1,26 @@
+{
+  "name": "@firstkind/sdk",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "prepublish": "npm run publish",
+  "scripts": {
+    "build": "esbuild ./lib/main.ts --bundle --analyze --minify --format=esm --outdir=./dist",
+    "types": "rm -f dist/main.d.ts && npx tsc --emitDeclarationOnly --outDir dist",
+    "publish": "npm run build && npm run types",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "First Kind Software",
+  "license": "APACHE-2.0",
+  "dependencies": {
+    "esbuild": "^0.14.39"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.16.0",
+    "@typescript-eslint/parser": "^5.16.0",
+    "eslint": "^8.15",
+    "ts-standard": "^11.0.0",
+    "typescript": "^4.6.3"
+  }
+}
