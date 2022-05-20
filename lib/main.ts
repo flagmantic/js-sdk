@@ -20,6 +20,10 @@ type FetchFlagsRemotelyArgs = Omit<
   "cacheDuration"
 >;
 
+type ResolvedFlag = {JsonFlag?: any, BooleanFlag?: boolean};
+
+type ResolvedResponse = {[key: string]: ResolvedFlag};
+
 interface CachedValue {
   expires_at: string;
   value: any;
@@ -82,6 +86,12 @@ function dateAdd(
   return ret;
 }
 
+const pullValueOutOfFlag = (flag: {JsonFlag?: any, BooleanFlag?: boolean}): any | undefined => {
+  const jResult = flag?.JsonFlag;
+  const bResult = flag?.BooleanFlag;
+  return jResult || bResult;
+}
+
 export async function fetchFlag<T>({
   userId,
   apiKey,
@@ -114,7 +124,7 @@ export async function fetchFlag<T>({
   if (resp.status === 404) {
     return defaultValue;
   }
-  const payload = await resp.json();
+  const payload: ResolvedResponse = await resp.json();
 
   if (isUsingCache) {
     const isDurationDefined =
@@ -142,7 +152,8 @@ export async function fetchFlag<T>({
     );
   }
 
-  return payload?.[flagKey] ?? defaultValue;
+  const result: ResolvedFlag | undefined = payload?.[flagKey];
+  return pullValueOutOfFlag(result) ?? defaultValue;
 }
 
 export async function fetchFlags<T>({
@@ -208,7 +219,11 @@ async function fetchFlagsRemotely({
   if (resp.status === 404) {
     return defaultValue;
   }
-  const payload = await resp.json();
+  const payload: ResolvedResponse= await resp.json();
+
+  Object.entries(payload).reduce((acc, [k,v]) => {
+    acc[k] = pullValueOutOfFlag(v);
+  }, {} as any);
 
   return payload ?? defaultValue;
 }
