@@ -2,8 +2,12 @@
 
 This SDK facilitates using the client APIs provided by [First Kind Software](https://firstkindsoftware.com)
 
-# Usage
+# Install
+```sh
+npm i @firstkind/sdk
+```
 
+# Usage
 ```js
 import { fetchFlag } from "@firstkind/sdk";
 
